@@ -1,0 +1,163 @@
+/* Token counter display */
+#token-counter-display {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  min-width: 200px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.token-counter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.token-counter-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.token-counter-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.token-counter-bar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.token-counter-progress {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.token-counter-target {
+  font-size: 11px;
+  color: #9ca3af;
+  text-align: right;
+}
+
+/* Modal styles */
+.token-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.token-modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.token-modal-content h2 {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  color: #111827;
+  font-weight: 700;
+}
+
+.token-modal-content p {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.token-modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.token-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
+}
+
+.token-btn-primary {
+  background: #10a37f;
+  color: white;
+}
+
+.token-btn-primary:hover {
+  background: #0d8c6d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(16, 163, 127, 0.3);
+}
+
+.token-btn-secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.token-btn-secondary:hover {
+  background: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.token-btn-tertiary {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.token-btn-tertiary:hover {
+  background: #fde68a;
+  transform: translateY(-1px);
+}

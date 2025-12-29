@@ -44,7 +44,7 @@ function createSummaryPrompt(messages) {
     })
     .join("\n\n");
 
-  return `Please provide a comprehensive summary of the following conversation that reached 350,000 tokens:\n\n${conversationText}\n\nProvide a detailed summary covering:\n1. Main topics discussed\n2. Key questions asked\n3. Important answers and solutions provided\n4. Any action items or conclusions\n\nSummary:`;
+  return `Please provide a comprehensive summary of the following conversation that reached 200,000 tokens:\n\n${conversationText}\n\nProvide a detailed summary covering:\n1. Main topics discussed\n2. Key questions asked\n3. Important answers and solutions provided\n4. Any action items or conclusions\n\nSummary:`;
 }
 
 // Show modal popup
@@ -126,74 +126,111 @@ function updateTokenDisplay(tokens) {
           100
         )}%; background-color: ${color};"></div>
       </div>
-      <div class="token-counter-target">Target: 350,000</div>
+      <div class="token-counter-target">Target: 200,000</div>
     </div>
   `;
 }
 
 // Main monitoring function
 async function monitorTokens() {
-  const convId = getConversationId();
-  const messages = getConversationText();
-  const totalTokens = calculateTotalTokens(messages);
+  try {
+    const convId = getConversationId();
+    const messages = getConversationText();
 
-  updateTokenDisplay(totalTokens);
+    // Skip if no messages yet
+    if (messages.length === 0) {
+      return;
+    }
 
-  // Get stored data
-  const result = await chrome.storage.local.get([`conversation_${convId}`]);
-  const convData = result[`conversation_${convId}`] || {
-    tokens: 0,
-    prompted: false,
-  };
+    const totalTokens = calculateTotalTokens(messages);
 
-  // Check if we've reached threshold and haven't prompted yet
-  if (totalTokens >= 350000 && !convData.prompted) {
-    showSummaryModal(totalTokens, messages);
+    updateTokenDisplay(totalTokens);
 
-    // Mark as prompted
-    chrome.storage.local.set({
-      [`conversation_${convId}`]: {
-        tokens: totalTokens,
-        prompted: true,
-        lastCheck: Date.now(),
-      },
-    });
-  } else {
-    // Update stored token count
-    chrome.storage.local.set({
-      [`conversation_${convId}`]: {
-        tokens: totalTokens,
-        prompted: convData.prompted,
-        lastCheck: Date.now(),
-      },
-    });
+    // Get stored data
+    const result = await chrome.storage.local.get([`conversation_${convId}`]);
+    const convData = result[`conversation_${convId}`] || {
+      tokens: 0,
+      prompted: false,
+    };
+
+    // Check if we've reached threshold and haven't prompted yet
+    if (totalTokens >= 200000 && !convData.prompted) {
+      showSummaryModal(totalTokens, messages);
+
+      // Mark as prompted
+      chrome.storage.local.set({
+        [`conversation_${convId}`]: {
+          tokens: totalTokens,
+          prompted: true,
+          lastCheck: Date.now(),
+        },
+      });
+    } else {
+      // Update stored token count
+      chrome.storage.local.set({
+        [`conversation_${convId}`]: {
+          tokens: totalTokens,
+          prompted: convData.prompted,
+          lastCheck: Date.now(),
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Error in monitorTokens:", error);
   }
 }
 
 // Initialize
 let observer;
+let monitorTimeout;
+
+// Debounced monitoring to prevent performance issues
+function debouncedMonitor() {
+  if (monitorTimeout) {
+    clearTimeout(monitorTimeout);
+  }
+  monitorTimeout = setTimeout(() => {
+    try {
+      monitorTokens();
+    } catch (error) {
+      console.error("Token monitoring error:", error);
+    }
+  }, 1000); // Wait 1 second after last change
+}
 
 function init() {
-  // Initial check
-  monitorTokens();
+  try {
+    // Initial check after page loads
+    setTimeout(() => {
+      monitorTokens();
+    }, 2000);
 
-  // Watch for new messages
-  observer = new MutationObserver(() => {
-    monitorTokens();
-  });
+    // Watch for new messages with debouncing
+    observer = new MutationObserver(debouncedMonitor);
 
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
+    // Only observe the main content area, not entire body
+    const targetNode = document.querySelector("main") || document.body;
+    observer.observe(targetNode, {
+      childList: true,
+      subtree: true,
+    });
 
-  // Periodic check every 5 seconds
-  setInterval(monitorTokens, 5000);
+    // Periodic check every 10 seconds (less aggressive)
+    setInterval(() => {
+      try {
+        monitorTokens();
+      } catch (error) {
+        console.error("Token monitoring error:", error);
+      }
+    }, 10000);
+  } catch (error) {
+    console.error("Extension initialization error:", error);
+  }
 }
 
 // Start when page is ready
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);
 } else {
-  init();
+  setTimeout(init, 1000);
 }

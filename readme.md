@@ -24,27 +24,21 @@ A Chrome extension that monitors token usage in ChatGPT conversations and automa
    - `popup.html`
    - `popup.js`
 
-2. **Create Icons** (optional but recommended):
-
-   - Create three PNG icons: `icon16.png`, `icon48.png`, `icon128.png`
-   - Or download free icons from sites like flaticon.com
-   - Place them in the extension folder
-
-3. **Load in Chrome**:
+2. **Load in Chrome**:
 
    - Open Chrome and go to `chrome://extensions/`
    - Enable "Developer mode" (toggle in top-right)
    - Click "Load unpacked"
    - Select the `chatgpt-token-counter` folder
 
-4. **Done!** The extension is now active.
+3. **Done!** The extension is now active.
 
 ## Usage
 
 1. **Visit ChatGPT**: Go to https://chatgpt.com or https://chat.openai.com
 2. **Token Counter Appears**: You'll see a counter in the top-right corner
-3. **Chat Normally**: The counter updates automatically as you chat
-4. **At 350k Tokens**: A modal will appear asking if you want a summary
+3. **Chat Normally**: The counter updates automatically as you chat and you can regulate as you chat through
+4. **At 200k Tokens**: A modal will appear asking if you want a summary
 5. **Generate Summary**: Click "Yes, Summarize" to open a new tab with the summary prompt pre-filled
 
 ## Token Counter Display
@@ -53,17 +47,17 @@ The counter shows:
 
 - Current token count
 - Progress bar (color changes as you approach the limit)
-- Target goal (350,000 tokens)
+- Target goal (200,000 tokens)
 
 **Colors**:
 
-- 🟢 Green: 0-49% (0-174,999 tokens)
-- 🟡 Yellow: 50-79% (175,000-279,999 tokens)
-- 🔴 Red: 80-100% (280,000+ tokens)
+- 🟢 Green: 0-49% 
+- 🟡 Yellow: 50-79% 
+- 🔴 Red: 80-100% 
 
 ## Modal Options
 
-When the 350k threshold is reached, you have three options:
+When the 200k threshold is reached, you have three options:
 
 1. **Yes, Summarize**: Opens new ChatGPT tab with summary prompt
 2. **No, Thanks**: Dismisses the modal
